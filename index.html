@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Новостная лента</title>
+  <title>Streem</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/telegram-web-app/6.7.0/telegram-web-app.js"></script>
   <style>
     body {
@@ -12,6 +12,10 @@
       padding: 0;
       background-color: var(--tg-theme-bg-color, #f5f5f5);
       color: var(--tg-theme-text-color, #000000);
+    }
+    .dark-mode {
+      background-color: #121212;
+      color: #ffffff;
     }
     .container {
       max-width: 800px;
@@ -37,6 +41,15 @@
       color: var(--tg-theme-button-color, #2481cc);
       cursor: pointer;
       font-size: 16px;
+    }
+    .theme-toggle {
+      padding: 8px 16px;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      background-color: var(--tg-theme-button-color, #2481cc);
+      color: white;
+      border-radius: 5px;
     }
     .news-feed {
       padding-bottom: 20px;
@@ -69,9 +82,18 @@
   </style>
 </head>
 <body>
+  <script>
+    window.addEventListener('load', () => {
+      if (window.Telegram && window.Telegram.WebApp) {
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+      }
+    });
+  </script>
   <div class="container">
+    <button class="theme-toggle" id="themeToggle">Темная тема</button>
     <div class="header">
-      <h1>Новостная лента</h1>
+      <h1>Streem</h1>
       <button class="settings-button" id="settingsButton">Настройки</button>
     </div>
     
@@ -82,16 +104,15 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const demoNews = [
-        { id: 'news1', content: 'Сегодня в мире произошло много интересных событий. Читайте наш обзор главных новостей дня.' },
-        { id: 'news2', content: 'Новый законопроект был представлен в парламенте. Эксперты обсуждают возможные последствия.' },
-        { id: 'news3', content: 'Представлен новый прорыв в области искусственного интеллекта. Что это значит для будущего технологий?' },
-        { id: 'news4', content: 'В крупных городах объявлена акция по улучшению городской инфраструктуры.' },
-        { id: 'news5', content: 'Спортсмены побили мировой рекорд на международных соревнованиях.' },
-        { id: 'news6', content: 'Эксперты прогнозируют рост экономики в следующем квартале.' },
-        { id: 'news7', content: 'Мировые лидеры встретились для обсуждения актуальных глобальных вопросов.' },
-        { id: 'news8', content: 'Новое исследование раскрывает неожиданные факты о здоровье и питании.' }
-      ];
+      const themeToggle = document.getElementById('themeToggle');
+      themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+      });
+      
+      const demoNews = Array.from({ length: 20 }, (_, i) => ({
+        id: `news${i + 1}`,
+        content: `Новость ${i + 1}: Это расширенное описание новости номер ${i + 1}, в котором подробно раскрываются детали события, его причины и возможные последствия. Данный материал содержит мнение экспертов и анализ ситуации.`
+      }));
       
       const newsFeed = document.getElementById('newsFeed');
       newsFeed.innerHTML = '';
@@ -103,19 +124,17 @@
         newsFeed.appendChild(newsItem);
       });
       
-      // Функция для анимации элементов при прокрутке
       const animateOnScroll = () => {
         const newsItems = document.querySelectorAll('.news-item');
         const windowBottom = window.innerHeight + window.scrollY;
         newsItems.forEach(item => {
           const itemTop = item.offsetTop;
-          if (windowBottom > itemTop + 50) { // порог в 50px
+          if (windowBottom > itemTop + 50) {
             item.classList.add('animate');
           }
         });
       };
-
-      // Запускаем анимацию при скролле и сразу после загрузки страницы
+      
       window.addEventListener('scroll', animateOnScroll);
       animateOnScroll();
     });
